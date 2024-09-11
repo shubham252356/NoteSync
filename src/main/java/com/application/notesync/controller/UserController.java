@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.application.notesync.dtos.UserDto;
 import com.application.notesync.entities.User;
 import com.application.notesync.serviceImpl.UserServiceImpl;
 
@@ -46,4 +47,14 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody UserDto userDto) {
+        if (userService.existsByUsername(userDto.getUsername())) {
+            return ResponseEntity.badRequest().body("Username is already taken");
+        }
+        userService.registerUser(userDto);
+        return ResponseEntity.ok("User registered successfully");
+    }
+
 }

@@ -3,8 +3,10 @@ package com.application.notesync.serviceImpl;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.application.notesync.dtos.UserDto;
 import com.application.notesync.entities.User;
 import com.application.notesync.repository.UserRepository;
 
@@ -13,6 +15,9 @@ public class UserServiceImpl {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User createUser(User user) {
         return userRepository.save(user);
@@ -32,5 +37,17 @@ public class UserServiceImpl {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public void registerUser(UserDto userDto) {
+        User user = new User();
+        user.setUsername(userDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        user.setEmail(userDto.getEmail());
+        userRepository.save(user);
     }
 }
